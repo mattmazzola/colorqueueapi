@@ -6,7 +6,7 @@ var firebaseSecret;
 var firebaseUid;
 if (process.env.firebaseSecret && process.env.firebaseUid) {
     firebaseSecret = process.env.firebaseSecret;
-    firebaseUid = process.env.firebaseSecret;
+    firebaseUid = process.env.firebaseUid;
     console.log('Using configuration fron process.env');
 }
 else {
