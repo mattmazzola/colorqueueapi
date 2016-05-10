@@ -88,5 +88,7 @@ server.post('/clear', function clear(req, res, next) {
         return next();
     });
 });
-server.listen(8080);
+var port = process.env.port || 8080;
+server.listen(port);
+console.log("Listening on port: " + port);
 //# sourceMappingURL=index.js.map
