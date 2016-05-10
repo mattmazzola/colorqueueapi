@@ -4,10 +4,23 @@ import * as restify from 'restify';
 import Firebase = require('firebase');
 import FirebaseTokenGenerator = require('firebase-token-generator');
 
-const configJson = fs.readFileSync(path.join(__dirname, '..', 'config.json'), 'utf8');
-const config = JSON.parse(configJson);
-const tokenGenerator = new FirebaseTokenGenerator(config.firebaseSecret);
-const token = tokenGenerator.createToken({ uid: config.firebaseUid, version: '1.0' });
+let firebaseSecret;
+let firebaseUid;
+
+if(process.env.firebaseSecret && process.env.firebaseUid) {
+  firebaseSecret = process.env.firebaseSecret;
+  firebaseUid = process.env.firebaseSecret;
+  console.log('Using configuration fron process.env');
+}
+else {
+  const config = require('../config.json');
+  firebaseSecret = config.firebaseSecret;
+  firebaseUid = config.firebaseUid;
+  console.log('Using configuration from config.json');
+}
+
+const tokenGenerator = new FirebaseTokenGenerator(firebaseSecret);
+const token = tokenGenerator.createToken({ uid: firebaseUid, version: '1.0' });
 
 const firebaseRef = new Firebase("https://colorqueue.firebaseio.com");
 firebaseRef.authWithCustomToken(token, (error, authData) => {

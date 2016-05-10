@@ -1,13 +1,22 @@
 "use strict";
-var fs = require('fs');
-var path = require('path');
 var restify = require('restify');
 var Firebase = require('firebase');
 var FirebaseTokenGenerator = require('firebase-token-generator');
-var configJson = fs.readFileSync(path.join(__dirname, '..', 'config.json'), 'utf8');
-var config = JSON.parse(configJson);
-var tokenGenerator = new FirebaseTokenGenerator(config.firebaseSecret);
-var token = tokenGenerator.createToken({ uid: config.firebaseUid, version: '1.0' });
+var firebaseSecret;
+var firebaseUid;
+if (process.env.firebaseSecret && process.env.firebaseUid) {
+    firebaseSecret = process.env.firebaseSecret;
+    firebaseUid = process.env.firebaseSecret;
+    console.log('Using configuration fron process.env');
+}
+else {
+    var config = require('../config.json');
+    firebaseSecret = config.firebaseSecret;
+    firebaseUid = config.firebaseUid;
+    console.log('Using configuration from config.json');
+}
+var tokenGenerator = new FirebaseTokenGenerator(firebaseSecret);
+var token = tokenGenerator.createToken({ uid: firebaseUid, version: '1.0' });
 var firebaseRef = new Firebase("https://colorqueue.firebaseio.com");
 firebaseRef.authWithCustomToken(token, function (error, authData) {
     if (error) {
